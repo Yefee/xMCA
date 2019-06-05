@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 
 
 ```python
-usta = xr.open_dataarray('data/USTA.nc').transpose(*['time', 'lat', 'lon'])
+usta = xr.open_dataarray('xMCA/examples/data/USTA.nc').transpose(*['time', 'lat', 'lon'])
 usta.name = 'USTA'
 print(usta)
 ```
@@ -65,7 +65,7 @@ print(usta)
 
 
 ```python
-sstpc = xr.open_dataarray('data/SSTPac.nc').transpose(*['time', 'lat', 'lon'])
+sstpc = xr.open_dataarray('xMCA/examples/data/SSTPac.nc').transpose(*['time', 'lat', 'lon'])
 sstpc.name = 'SSTPC'
 print(sstpc)
 ```
