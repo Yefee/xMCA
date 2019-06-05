@@ -1,4 +1,3 @@
-
 # About xMCA
 xMCA is Maximum Covariance Analysis (sometimes also called SVD) in xarray. 
 
