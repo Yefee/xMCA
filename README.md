@@ -1,6 +1,6 @@
 
 # About xMCA
-xMCA is Maximum Covariance Analysis (sometimes also called SVD)in xarray. 
+xMCA is Maximum Covariance Analysis (sometimes also called SVD) in xarray. 
 
 
 # How to install
@@ -116,13 +116,7 @@ re[0].plot(ax=ax2[1])
 
 
 
-
-    [<matplotlib.lines.Line2D at 0x11e75aa58>]
-
-
-
-
-![png](https://github.com/Yefee/xMCA/tree/master/xMCA/examples/example_files/example_6_1.png)
+![png](https://github.com/Yefee/xMCA/blob/master/xMCA/examples/example_files/example_6_1.png)
 
 
 Homogeneous and heterogeneous regression
@@ -144,12 +138,5 @@ re[0].plot(ax=ax2[1])
 ```
 
 
-
-
-    <matplotlib.collections.QuadMesh at 0x11ecf3cc0>
-
-
-
-
-![png](https://github.com/Yefee/xMCA/tree/master/xMCA/examples/example_files/example_9_1.png)
+![png](https://github.com/Yefee/xMCA/blob/master/xMCA/examples/example_files/example_9_1.png)
 
