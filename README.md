@@ -122,7 +122,7 @@ re[0].plot(ax=ax2[1])
 
 
 
-![png](example_files/example_6_1.png)
+![png](examples/example_files/example_6_1.png)
 
 
 Homogeneous and heterogeneous regression
@@ -151,5 +151,5 @@ re[0].plot(ax=ax2[1])
 
 
 
-![png](example_files/example_9_1.png)
+![png](examples/example_files/example_9_1.png)
 
