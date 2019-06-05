@@ -10,10 +10,11 @@ git clone https://github.com/Yefee/xMCA.git
 cd xcesm
 python setup.py install
 ```
-
+# Future Plan
+In next version, A Monte Carlo method will be added for statistical test.
 
 # Example
-MCA analysis for US surface air temperature and SST over the Pacific
+MCA analysis for US surface air temperature and SST over the Pacific.
 This example is taken from https://atmos.washington.edu/~breth/classes/AS552/matlab/lect/html/MCA_PSSTA_USTA.html
 
 
@@ -78,7 +79,7 @@ print(sstpc)
       * time     (time) int64 0 1 2 3 4 5 6 7 8 ... 388 389 390 391 392 393 394 395
 
 
-Decompsition and retrieve the first and second loadings and expansion coefficeints 
+### Decompsition and retrieve the first and second loadings and expansion coefficeints 
 
 
 ```python
@@ -119,7 +120,7 @@ re[0].plot(ax=ax2[1])
 ![png](https://github.com/Yefee/xMCA/blob/master/xMCA/examples/example_files/example_6_1.png)
 
 
-Homogeneous and heterogeneous regression
+### Homogeneous and heterogeneous regression
 
 
 ```python
