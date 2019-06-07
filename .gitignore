@@ -1,3 +1,7 @@
 xMCA.egg
 .DS_Store
 xMCA.egg-info
+__pycache__
+.ipynb_checkpoints
+build
+dist
