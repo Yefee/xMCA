@@ -6,7 +6,7 @@ xMCA is Maximum Covariance Analysis (sometimes also called SVD) in xarray.
 ### via git
 ```
 git clone https://github.com/Yefee/xMCA.git
-cd xcesm
+cd xMCA
 python setup.py install
 ```
 # Future Plan
