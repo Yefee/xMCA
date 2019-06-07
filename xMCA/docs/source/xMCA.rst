@@ -1,0 +1,3 @@
+.. automodule:: core.xMCA
+    :members:
+

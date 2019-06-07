@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-Description:
+xMCA
+=============
 
-@author: Yefee
 """
 
 import numpy as np
 import xarray as xr
 
-class xMCA():
+class xMCA:
+    """xMCA class
+    This class is employed to do the MCA and return assocaited results.
+
+    Define the class amd do decomposition as:
+
+    >>> mca = xMCA(leftField, rightField)
+    >>> mca.solver()
+    """
 
     def __init__(self, left, right):
 
@@ -28,8 +36,8 @@ class xMCA():
 
         **Examples:**
         MCA analysis::
-            from xMCA import xMCA
-            mca = xMCA(left, right)
+        >>> from xMCA import xMCA
+        >>> mca = xMCA(left, right)
         """
 
         if not isinstance(left, xr.DataArray) or not isinstance(right, xr.DataArray):
@@ -194,11 +202,14 @@ class xMCA():
         fractions.
 
         **Examples:**
+
         Initiate the instance::
-            test = xMCA(left, right)
+
+        >>> test = xMCA(left, right)
 
         Call the solver::
-            test.solver()
+
+        >>> test.solver()
         """
 
         leftConField = self._concatenateExtraDims(self._leftField)
@@ -218,7 +229,6 @@ class xMCA():
 
 
     def patterns(self, n=1, scaling=True):
-
         """Sigular vectors of left and right fields (SVs).
 
         **Optional arguments:**
@@ -230,18 +240,22 @@ class xMCA():
 
         **Returns:**
         *SVs*
-           Two `~xarray.DataArray` containing the SVs. The SVs will be reshaped
+           Two `xarray.DataArray` containing the SVs. The SVs will be reshaped
            to the same as left and right spatial domains.
 
         **Examples:**
+
         Initiate the instance::
-            mca = xMCA(left, right)
+            
+        >>> mca = xMCA(left, right)
 
         Call the solver::
-            mca.solver()
+
+        >>> mca.solver()
 
         Retrive the first two SVs of left and right fields with scaling::
-            lp, rp = mca.patterns(n=2)
+        
+        >>> lp, rp = mca.patterns(n=2)
 
         """
 
@@ -273,6 +287,7 @@ class xMCA():
     def expansionCoefs(self, n=1, scale=True):
 
         """Expansion coefficients of left and right fields (PCs).
+
         **Optional arguments:**
         *scaling*
             Scaling of the PCs to unit variance by deviding the standard deviation of
@@ -282,17 +297,20 @@ class xMCA():
 
         **Returns:**
         *PCs*
-           Two `~xarray.DataArray` containing the PCs.
+           Two `xarray.DataArray` containing the PCs.
 
         **Examples:**
         Initiate the instance::
-            mca = xMCA(left, right)
+        
+        >>> mca = xMCA(left, right)
 
         Call the solver::
-            mca.solver()
+        
+        >>> mca.solver()
 
         Retrive the first two PCs of left and right fields with scaling::
-            le, re = mca.expansionCoefs(n=2)
+        
+        >>> le, re = mca.expansionCoefs(n=2)
 
         """
 
@@ -323,17 +341,20 @@ class xMCA():
 
         **Returns:**
         *FCs*
-           Two `~xarray.DataArray` containing the FCs.
+           Two `xarray.DataArray` containing the FCs.
 
         **Examples:**
         Initiate the instance::
-            mca = xMCA(left, right)
+        
+        >>> mca = xMCA(left, right)
 
         Call the solver::
-            mca.solver()
+        
+        >>> mca.solver()
 
         Retrive the first two FCs with scaling::
-            le, re = mca.covFracs(n=2)
+            
+        >>> le, re = mca.covFracs(n=2)
 
         """
 
@@ -355,17 +376,20 @@ class xMCA():
 
         **Returns:**
         *SGs*
-           Two `~xarray.DataArray` containing the SGs.
+           Two `xarray.DataArray` containing the SGs.
 
         **Examples:**
         Initiate the instance::
-            mca = xMCA(left, right)
+        
+        >>> mca = xMCA(left, right)
 
         Call the solver::
-            mca.solver()
+            
+        >>> mca.solver()
 
         Retrive the first two SGs with scaling::
-            sgs = mca.sigValues(n=2)
+        
+        >>> sgs = mca.sigValues(n=2)
 
         """
         return xr.DataArray(self._s[0:n],
@@ -383,10 +407,10 @@ class xMCA():
 
         **Optional arguments:**
         *x*
-            time series of x in `~xarray.DataArray`.
+            time series of x in `xarray.DataArray`.
 
         *y*
-            time series of y in `~xarray.DataArray`.
+            time series of y in `xarray.DataArray`.
 
         *correlating*
             Calculating correlations or regression coefficients.
@@ -394,7 +418,7 @@ class xMCA():
 
         **Returns:**
         *r*
-           An `~xarray.DataArray` correlations between x and y.
+           An `xarray.DataArray` correlations between x and y.
 
         """
         x = x - x.mean(dim=self._timeCoords.name)
@@ -429,17 +453,20 @@ class xMCA():
 
         **Returns:**
         *HPs*
-           Two `~xarray.DataArray` containing the HPs.
+           Two `xarray.DataArray` containing the HPs.
 
         **Examples:**
         Initiate the instance::
-            mca = xMCA(left, right)
+        
+        >>> mca = xMCA(left, right)
 
         Call the solver::
-            mca.solver()
+        
+        >>> mca.solver()
 
         Retrive the first two PCs expressed as correlations::
-            sgs = mca.homogeneousPatterns(n=2)
+        
+        >>> sgs = mca.homogeneousPatterns(n=2)
 
         """
         le, re = self.expansionCoefs(n=n)
@@ -488,17 +515,20 @@ class xMCA():
 
         **Returns:**
         *HPs*
-           Two `~xarray.DataArray` containing the HPs.
+           Two `xarray.DataArray` containing the HPs.
 
         **Examples:**
         Initiate the instance::
-            mca = xMCA(left, right)
+        
+        >>> mca = xMCA(left, right)
 
         Call the solver::
-            mca.solver()
+        
+        >>> mca.solver()
 
         Retrive the first two PCs expressed as correlations::
-            sgs = mca.homogeneousPatterns(n=2)
+        
+        >>> sgs = mca.homogeneousPatterns(n=2)
 
         """
         le, re = self.expansionCoefs(n=n)
