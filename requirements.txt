@@ -1,0 +1,3 @@
+numpy==1.15.4
+xarray==0.11.2
+setuptools==40.6.3
