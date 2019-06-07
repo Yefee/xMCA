@@ -1,7 +1,7 @@
 # About xMCA
 xMCA is Maximum Covariance Analysis (sometimes also called SVD) in xarray. 
 
-API Documentation: xmca.readthedocs.io
+API Documentation: http://xmca.readthedocs.io/
 
 # How to install
 ### via git
