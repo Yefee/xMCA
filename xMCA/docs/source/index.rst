@@ -12,4 +12,3 @@ Here shows shows the APIs of xMCA.
      :caption: Contents:
 
      xMCA
-     people
