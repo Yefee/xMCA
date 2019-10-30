@@ -192,6 +192,27 @@ class xMCA:
         self._V = V
         self._s = s
 
+    def _double_t_test(self, t0, dof):
+
+        """
+        Double tailed student t test.
+
+        **Arguments:**
+        *array*
+        t0 field `xarray.DataArray`;
+        dof `int`;
+
+        **Return:**
+        *array*
+           p: p values;
+
+        """
+
+        from scipy.stats import t
+        from xarray.ufuncs import fabs
+        pvalue = 2 * t.sf(fabs(t0), dof) * xr.ones_like(t0)
+        return pvalue
+
 
     def solver(self):
         """
@@ -400,7 +421,7 @@ class xMCA:
                                    self._leftField.name + ' and ' + self._rightField.name +'.'})
 
 
-    def _correlationCalc(self, x, y, correlating=True):
+    def _correlationCalc(self, x, y, correlating=True, statistical_test=False):
 
         """
         Calculate the correlations between two fields or time series.
@@ -433,10 +454,24 @@ class xMCA:
         else:
             r = xy / xx ** 2
 
-        return r
+        if statistical_test:
+
+            from xarray.ufuncs import sqrt
+            if correlating:
+                r_coe = r
+            else:
+                r_coe = xy / xx / yy
+
+            dof = len(x[self._timeCoords.name]) - 2
+            t0 = r_coe * sqrt(dof / ((1-r_coe+1e-20)*(1+r_coe+1e-20)))
+            p = self._double_t_test(t0, dof)
+        else:
+            p = None
+
+        return r, p
 
 
-    def homogeneousPatterns(self, n=1, correlating=True):
+    def homogeneousPatterns(self, n=1, correlating=True, statistical_test=False):
         """
         Sigular modes expressed as the
         correlation between the expansion coefficient time series (PCs)
@@ -451,9 +486,15 @@ class xMCA:
             Expressed as correlation maps. Default is True. Otherwise, expressed as
             regression coefficient maps.
 
+        *statistical_test*
+            Curry out the double tailed student-t test. Default is False. Otherwise, both left 
+            and right HPs' p-values will be returned.
+
         **Returns:**
         *HPs*
            Two `xarray.DataArray` containing the HPs.
+        *Ps*
+           Two `xarray.DataArray` containing the P-values.
 
         **Examples:**
         Initiate the instance::
@@ -472,33 +513,59 @@ class xMCA:
         le, re = self.expansionCoefs(n=n)
 
         for f in ['l', 'r']:
-            r = []
+            r, pval = [], []
             for i in range(n):
                 if f == 'l':
-                    tmp = self._correlationCalc(self._leftField, le.sel(n=i))
+                    tmp, p = self._correlationCalc(self._leftField, le.sel(n=i), 
+                                                    correlating=correlating, 
+                                                    statistical_test=statistical_test)
                 else:
-                    tmp = self._correlationCalc(self._rightField, re.sel(n=i))
+                    tmp, p = self._correlationCalc(self._rightField, re.sel(n=i),  
+                                                    correlating=correlating, 
+                                                    statistical_test=statistical_test)
 
                 tmp['n'] = i
                 r.append(tmp)
+                if p is not None:
+                    p['n'] = i
+                    pval.append(p)
 
             if f == 'l':
                 lHP = xr.concat(r, dim='n')
-                # lHP.name = 'lHP'
+                if statistical_test:
+                    pl = xr.concat(pval, dim='n')
+                else:
+                    pl = None
             else:
                 rHP = xr.concat(r, dim='n')
-                # rHP.name = 'rHP'
+                if statistical_test:
+                    rl = xr.concat(pval, dim='n')
+                else:
+                    rl = None
+
 
         lHP.name = 'leftHomoPatterns'
-        lHP.attrs['long_name'] = 'Homogeneous Patterns for ' + self._leftField.name + '.'
         rHP.name = 'rightHomoPatterns'
-        rHP.attrs['long_name'] = 'Homogeneous Patterns for ' + self._rightField.name + '.'
 
-        return lHP, rHP
+        if correlating:
+            lHP.attrs['long_name'] = 'Homogeneous Patterns (correlation coefficient) for ' + self._leftField.name + '.'
+            rHP.attrs['long_name'] = 'Homogeneous Patterns (correlation coefficient) for ' + self._rightField.name + '.'
+        else:
+            lHP.attrs['long_name'] = 'Homogeneous Patterns (regression coefficient) for ' + self._leftField.name + '.'
+            rHP.attrs['long_name'] = 'Homogeneous Patterns (regression coefficient) for ' + self._rightField.name + '.'
+       
+        if pl is not None:
+            pl.name = 'leftPval'
+            rl.name = 'rightPval'
+            pl.attrs['long_name'] = 'p-value for ' + self._leftField.name + '.'
+            rl.attrs['long_name'] = 'p-value for ' + self._rightField.name + '.'
+            return lHP, rHP, pl, rl
+        else:
+            return lHP, rHP
 
 
 
-    def heterogeneousPatterns(self, n=1, correlating=True):
+    def heterogeneousPatterns(self, n=1, correlating=True, statistical_test=False):
         """
         Sigular modes expressed as the
         correlation between the expansion coefficient time series (PCs)
@@ -513,9 +580,16 @@ class xMCA:
             Expressed as correlation maps. Default is True. Otherwise, expressed as
             regression coefficient maps.
 
+        *statistical_test*
+            Curry out the double tailed student-t test. Default is False. Otherwise, both left 
+            and right HPs' p-values will be returned.
+
+
         **Returns:**
         *HPs*
            Two `xarray.DataArray` containing the HPs.
+        *Ps*
+           Two `xarray.DataArray` containing the P-values.
 
         **Examples:**
         Initiate the instance::
@@ -535,27 +609,52 @@ class xMCA:
 
 
         for f in ['l', 'r']:
-            r = []
+            r, pval = [], []
             for i in range(n):
                 if f == 'l':
-                    tmp = self._correlationCalc(self._leftField, re.sel(n=i))
+                    tmp, p = self._correlationCalc(self._leftField, re.sel(n=i),
+                                                    correlating=correlating, 
+                                                    statistical_test=statistical_test)
                 else:
-                    tmp = self._correlationCalc(self._rightField, le.sel(n=i))
+                    tmp, p = self._correlationCalc(self._rightField, le.sel(n=i), 
+                                                    correlating=correlating, 
+                                                    statistical_test=statistical_test)
 
                 tmp['n'] = i
                 r.append(tmp)
+                if p is not None:
+                    p['n'] = i
+                    pval.append(p)
+
 
             if f == 'l':
                 lHP = xr.concat(r, dim='n')
-                # lHP.name = 'lHP'
+                if statistical_test:
+                    pl = xr.concat(pval, dim='n')
+                else:
+                    pl = None
             else:
                 rHP = xr.concat(r, dim='n')
-                # rHP.name = 'rHP'
+                if statistical_test:
+                    rl = xr.concat(pval, dim='n')
+                else:
+                    rl = None
 
         lHP.name = 'leftHeteroPatterns'
-        lHP.attrs['long_name'] = 'Heterogeneous Patterns for ' + self._leftField.name + '.'
         rHP.name = 'rightHeteroPatterns'
-        rHP.attrs['long_name'] = 'Heterogeneous Patterns for ' + self._rightField.name + '.'
 
-        return lHP, rHP
-
+        if correlating:
+            lHP.attrs['long_name'] = 'Heterogeneous Patterns (correlation coefficient) for ' + self._leftField.name + '.'
+            rHP.attrs['long_name'] = 'Heterogeneous Patterns (correlation coefficient) for ' + self._rightField.name + '.'
+        else:
+            lHP.attrs['long_name'] = 'Heterogeneous Patterns (regression coefficient) for ' + self._leftField.name + '.'
+            rHP.attrs['long_name'] = 'Heterogeneous Patterns (regression coefficient) for ' + self._rightField.name + '.'
+       
+        if pl is not None:
+            pl.name = 'leftPval'
+            rl.name = 'rightPval'
+            pl.attrs['long_name'] = 'p-value for ' + self._leftField.name + '.'
+            rl.attrs['long_name'] = 'p-value for ' + self._rightField.name + '.'
+            return lHP, rHP, pl, rl
+        else:
+            return lHP, rHP
