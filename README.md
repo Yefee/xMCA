@@ -144,6 +144,24 @@ re[0].plot(ax=ax2[1])
 ![png](https://github.com/Yefee/xMCA/blob/master/xMCA/examples/example_files/example_9_1.png)
 
 
+### Two-tailed Student-t test
+```python
+le, re, lphet, rphet = sst_ts.heterogeneousPatterns(n=1, statistical_test=True)
+```
+
+```python
+fig, (ax1, ax2) = plt.subplots(2, 2, figsize=(12, 5))
+le[0].plot(ax=ax1[0])
+re[0].plot(ax=ax1[1])
+
+# Only plot where p<0.01
+lphet[0].where(lphet[0]<0.01).plot(ax=ax2[0])
+rphet[0].where(rphet[0]<0.01).plot(ax=ax2[1])
+```
+![png](https://github.com/Yefee/xMCA/blob/master/xMCA/examples/example_files/example_statistical_test_1.png)
+
+
+
 
 # Example 2
 EOF analysis for US surface air temperature and SST over the Pacific
