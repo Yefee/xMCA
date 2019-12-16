@@ -1,7 +1,7 @@
 [![Documentation Status](https://readthedocs.org/projects/xmca/badge/?version=latest)](https://xmca.readthedocs.io/en/latest/?badge=latest)
 
 # About xMCA
-xMCA, inspared from EOFs https://github.com/ajdawson/eofs,  is Maximum Covariance Analysis (sometimes also called SVD) in xarray. 
+xMCA, inspired from EOFs https://github.com/ajdawson/eofs,  is Maximum Covariance Analysis (sometimes also called SVD) in xarray. 
 
 API Documentation: http://xmca.readthedocs.io/
 
